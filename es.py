@@ -20,9 +20,13 @@ def validate_email(email):
     pattern = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
     return re.match(pattern, email) is not None
 
-def extract_emails(text):
-    email_pattern = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b'
-    return re.findall(email_pattern, text)
+def extract_emails_from_links(soup):
+    emails = set()
+    for a_tag in soup.find_all('a', href=True):
+        email_match = re.search(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b', a_tag['href'])
+        if email_match:
+            emails.add(email_match.group())
+    return list(emails)
 
 def scrape_website(url, unique_emails):
     try:
@@ -30,7 +34,7 @@ def scrape_website(url, unique_emails):
         options = Options()
         options.headless = True
         driver = webdriver.Chrome(options=options)
-        
+
         # Load the page with Selenium
         driver.get(url)
 
@@ -45,9 +49,9 @@ def scrape_website(url, unique_emails):
 
         # Use BeautifulSoup to parse the HTML source
         soup = BeautifulSoup(page_source, 'html.parser')
-        
-        # Extract emails using BeautifulSoup
-        emails = extract_emails(soup.get_text())
+
+        # Extract emails from links using BeautifulSoup
+        emails = extract_emails_from_links(soup)
 
         if emails:
             with open('emails.txt', 'a') as file:
