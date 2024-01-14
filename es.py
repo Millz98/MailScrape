@@ -20,13 +20,14 @@ def validate_email(email):
     pattern = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
     return re.match(pattern, email) is not None
 
-def extract_emails_from_links(soup):
+def extract_emails_from_text(soup):
     emails = set()
-    for a_tag in soup.find_all('a', href=True):
-        email_match = re.search(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b', a_tag['href'])
-        if email_match:
-            emails.add(email_match.group())
+    for div_tag in soup.find_all('div'):
+        email_matches = re.findall(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b', div_tag.get_text())
+        if email_matches:
+            emails.update(email_matches)
     return list(emails)
+
 
 def scrape_website(url, unique_emails):
     try:
@@ -50,8 +51,8 @@ def scrape_website(url, unique_emails):
         # Use BeautifulSoup to parse the HTML source
         soup = BeautifulSoup(page_source, 'html.parser')
 
-        # Extract emails from links using BeautifulSoup
-        emails = extract_emails_from_links(soup)
+        # Extract emails from on-screen text using BeautifulSoup
+        emails = extract_emails_from_text(soup)
 
         if emails:
             with open('emails.txt', 'a') as file:
@@ -80,15 +81,14 @@ def main():
         return
 
     logging.basicConfig(filename='scraper.log', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
-    logging.info(f"Starting scrape for {args.url}")
 
-    unique_emails = set()  # Maintain a set to store unique emails
+    unique_emails = set() # Maintain a set to store unique emails
     with tqdm(total=1, desc=f"Scraping {args.url}") as pbar:
         try:
             scrape_website(args.url, unique_emails)
             pbar.update(1)
         except KeyboardInterrupt:
-            print("\nScraping interrupted by user.")
+            print("\nScraping interrupted by the user.")
         except Exception as e:
             logging.error(f"Error during scraping: {e}")
             pbar.update(1)
