@@ -28,6 +28,14 @@ def extract_emails_from_text(soup):
             emails.update(email_matches)
     return list(emails)
 
+def extract_emails_from_mailto(soup):
+    emails = set()
+    for mailto_link in soup.select('a[href^="mailto:"]'):
+        email = re.search(r'mailto:(.*)', mailto_link['href'])
+        if email:
+            emails.add(email.group(1))
+    return list(emails)
+
 def scrape_website(url, unique_emails):
     try:
         # Configure Selenium to use a headless browser
@@ -51,12 +59,18 @@ def scrape_website(url, unique_emails):
         soup = BeautifulSoup(page_source, 'html.parser')
 
         # Extract emails from on-screen text using BeautifulSoup
-        emails = extract_emails_from_text(soup)
+        text_emails = extract_emails_from_text(soup)
+
+        # Extract emails from mailto links using BeautifulSoup
+        mailto_emails = extract_emails_from_mailto(soup)
+
+        # Combine the two sets of emails
+        emails = text_emails + mailto_emails
 
         if emails:
             with open('emails.txt', 'a') as file:
                 for email in emails:
-                    if email not in unique_emails:
+                    if email not in unique_emails and validate_email(email):
                         file.write(email + '\n')
                         unique_emails.add(email)
 
