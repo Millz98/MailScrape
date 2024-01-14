@@ -22,12 +22,11 @@ def validate_email(email):
 
 def extract_emails_from_text(soup):
     emails = set()
-    for div_tag in soup.find_all('div'):
-        email_matches = re.findall(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b', div_tag.get_text())
+    for paragraph in soup.find_all('p'):
+        email_matches = re.findall(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b', paragraph.get_text())
         if email_matches:
             emails.update(email_matches)
     return list(emails)
-
 
 def scrape_website(url, unique_emails):
     try:
