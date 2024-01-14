@@ -1,5 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
 import re
 import urllib.parse
 import time
@@ -19,19 +21,33 @@ def validate_email(email):
     return re.match(pattern, email) is not None
 
 def extract_emails(text):
-    email_pattern = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
+    email_pattern = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b'
     return re.findall(email_pattern, text)
 
 def scrape_website(url, unique_emails):
     try:
-        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'}
-        response = requests.get(url, headers=headers, timeout=10)
-        response.raise_for_status()
+        # Configure Selenium to use a headless browser
+        options = Options()
+        options.headless = True
+        driver = webdriver.Chrome(options=options)
+        
+        # Load the page with Selenium
+        driver.get(url)
 
-        soup = BeautifulSoup(response.text, 'html.parser')
-        page_text = soup.get_text()
+        # Wait for dynamic content to load (you might need to adjust the wait time)
+        time.sleep(5)
 
-        emails = extract_emails(page_text)
+        # Extract the HTML source after dynamic content is loaded
+        page_source = driver.page_source
+
+        # Close the Selenium browser
+        driver.quit()
+
+        # Use BeautifulSoup to parse the HTML source
+        soup = BeautifulSoup(page_source, 'html.parser')
+        
+        # Extract emails using BeautifulSoup
+        emails = extract_emails(soup.get_text())
 
         if emails:
             with open('emails.txt', 'a') as file:
@@ -46,18 +62,6 @@ def scrape_website(url, unique_emails):
             print("No emails found on the given website.")
             logging.info(f"No emails found on {url}")
 
-    except requests.exceptions.HTTPError as errh:
-        print(f"HTTP Error: {errh}")
-        logging.error(f"HTTP Error: {errh}")
-    except requests.exceptions.ConnectionError as errc:
-        print(f"Error Connecting: {errc}")
-        logging.error(f"Error Connecting: {errc}")
-    except requests.exceptions.Timeout as errt:
-        print(f"Timeout Error: {errt}")
-        logging.error(f"Timeout Error: {errt}")
-    except requests.exceptions.RequestException as err:
-        print(f"Oops! Something went wrong: {err}")
-        logging.error(f"Request Exception: {err}")
     except Exception as e:
         print(f"Unexpected error: {e}")
         logging.error(f"Unexpected error: {e}")
