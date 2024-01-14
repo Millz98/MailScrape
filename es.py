@@ -10,7 +10,7 @@ def extract_emails(text):
     email_pattern = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
     return re.findall(email_pattern, text)
 
-def scrape_website(url):
+def scrape_website(url, unique_emails):
     try:
         headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'}
         response = requests.get(url, headers=headers, timeout=10)
@@ -24,9 +24,11 @@ def scrape_website(url):
         if emails:
             with open('emails.txt', 'a') as file:
                 for email in emails:
-                    file.write(email + '\n')
+                    if email not in unique_emails:
+                        file.write(email + '\n')
+                        unique_emails.add(email)
 
-            print(f"Scraping successful. {len(emails)} emails found and saved to 'emails.txt'")
+            print(f"Scraping successful. {len(emails)} unique emails found and saved to 'emails.txt'")
         else:
             print("No emails found on the given website.")
 
@@ -38,6 +40,9 @@ def scrape_website(url):
         print(f"Timeout Error: {errt}")
     except requests.exceptions.RequestException as err:
         print(f"Oops! Something went wrong: {err}")
+    
+    except Exception as e:
+        print(f"Unexpected error: {e}")
 
 def main():
     parser = argparse.ArgumentParser(description="Scrape emails from a website.")
@@ -47,11 +52,10 @@ def main():
     logging.basicConfig(filename='scraper.log', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
     logging.info(f"Starting scrape for {args.url}")
 
+    unique_emails = set()  # Maintain a set to store unique emails
     with tqdm(total=1, desc=f"Scraping {args.url}") as pbar:
         try:
-            for _ in tqdm(range(0, 100, 10), desc="Extracting emails", leave=False):
-                scrape_website(args.url)
-                time.sleep(1)  # Rate limiter
+            scrape_website(args.url, unique_emails)
             pbar.update(1)
         except Exception as e:
             logging.error(f"Error during scraping: {e}")
