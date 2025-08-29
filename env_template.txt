@@ -1,0 +1,24 @@
+# Environment Variables Template
+# Copy this file to .env and fill in your actual values
+# NEVER commit .env files to git!
+
+# Mailgun API Configuration
+MAILGUN_API_KEY=your_api_key_here
+MAILGUN_DOMAIN=your_domain_here
+
+# Alternative API Key (for compatibility)
+API_KEY=your_api_key_here
+
+# Email Configuration
+FROM_NAME=Your Name
+FROM_EMAIL=your_email@example.com
+REPLY_TO=reply@yourdomain.com
+
+# Rate Limiting
+DEFAULT_DELAY=2.0
+MAX_EMAILS_PER_HOUR=100
+MAX_EMAILS_PER_DAY=1000
+
+# Logging
+LOG_LEVEL=INFO
+LOG_FILE=email_sender.log
