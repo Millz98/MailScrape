@@ -2,3 +2,5 @@
 2024-02-23 15:57:40,035 - INFO - No emails found on https://alexanderfn.com/
 2024-02-23 15:59:12,673 - INFO - Scraped 28 unique emails from https://www.ansn.ca/contact/eop-members/
 2024-03-01 16:43:56,550 - INFO - Scraped 2 unique emails from https://www.albertalawoffice.ca/
+2025-08-29 13:45:46,904 - INFO - Attempting to scrape https://httpbin.org/html using requests and BeautifulSoup...
+2025-08-29 13:45:48,405 - INFO - No emails found on https://httpbin.org/html
