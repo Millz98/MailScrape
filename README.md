@@ -15,9 +15,28 @@ A highly efficient email scraping tool that extracts email addresses from websit
 
 ## 📦 Installation
 
+### Quick Install
 ```bash
-pip install -r requirements.txt
+# Make the install script executable and run it
+chmod +x install_dependencies.sh
+./install_dependencies.sh
 ```
+
+### Manual Install
+```bash
+# Install for current user (recommended)
+pip3 install --user -r requirements.txt
+
+# Or install system-wide (requires sudo)
+sudo pip3 install -r requirements.txt
+```
+
+### Troubleshooting
+If you get `ModuleNotFoundError`:
+1. **Try user installation**: `pip3 install --user -r requirements.txt`
+2. **Use Python module**: `python3 -m pip install --user -r requirements.txt`
+3. **System-wide install**: `sudo pip3 install -r requirements.txt`
+4. **Check Python path**: `python3 -c "import sys; print(sys.path)"`
 
 ## 🎯 Usage
 

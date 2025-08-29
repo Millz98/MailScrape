@@ -2,14 +2,42 @@ import requests
 try:
     from bs4 import BeautifulSoup
 except ImportError:
-    print("Error: beautifulsoup4 is not installed. Please run: pip install beautifulsoup4")
+    print("Error: beautifulsoup4 is not installed.")
+    print("Please run: pip3 install beautifulsoup4")
     exit(1)
 import re
 import urllib.parse
 import time
 import argparse
-from tqdm import tqdm
+try:
+    from tqdm import tqdm
+except ImportError:
+    print("Warning: tqdm is not installed. Progress bars will be disabled.")
+    print("To install: pip3 install tqdm")
+    print("Or use system Python: sudo pip3 install tqdm")
+    
+    # Create a simple fallback progress bar
+    class SimpleProgressBar:
+        def __init__(self, total, desc=""):
+            self.total = total
+            self.current = 0
+            self.desc = desc
+            print(f"{desc} - Starting...")
+        
+        def update(self, n=1):
+            self.current += n
+            print(f"{self.desc} - Progress: {self.current}/{self.total}")
+        
+        def __enter__(self):
+            return self
+        
+        def __exit__(self, exc_type, exc_val, exc_tb):
+            print(f"{self.desc} - Completed!")
+    
+    tqdm = SimpleProgressBar
 import logging
+from collections import deque
+from urllib.robotparser import RobotFileParser
 
 def validate_url(url):
     try:
