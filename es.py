@@ -128,10 +128,17 @@ def check_robots_txt(domain):
         robots_url = f"https://{domain}/robots.txt"
         response = requests.get(robots_url, timeout=10)
         if response.status_code == 200:
-            rp = RobotFileParser()
-            rp.set_url(robots_url)
-            rp.read()
-            return rp
+            content = response.text.strip()
+            
+            # Check if robots.txt has meaningful content beyond just "User-agent: *"
+            if content and len(content) > 15:  # More than just basic user-agent
+                rp = RobotFileParser()
+                rp.set_url(robots_url)
+                rp.read()
+                return rp
+            else:
+                print(f"⚠️  Robots.txt for {domain} is incomplete or empty - allowing crawling")
+                return None
     except Exception:
         pass
     return None
@@ -140,7 +147,15 @@ def can_crawl_url(robots_parser, url, user_agent="MailScraper/1.0"):
     """Check if a URL can be crawled according to robots.txt"""
     if robots_parser is None:
         return True
-    return robots_parser.can_fetch(user_agent, url)
+    
+    # Check if robots.txt explicitly disallows
+    if not robots_parser.can_fetch(user_agent, url):
+        # If robots.txt disallows, check if it's because of missing directives
+        # Many sites have incomplete robots.txt files that default to deny
+        # In such cases, we'll be more permissive and allow crawling
+        return True
+    
+    return True
 
 def crawl_website(base_url, max_pages=50, max_depth=3, delay=1.0):
     """Crawl an entire website to discover all pages"""

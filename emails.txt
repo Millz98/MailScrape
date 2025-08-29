@@ -1,2 +1,11 @@
-service@sterlingplumbing.ca
+info@nickelplumbing.com
 office@sterlingplumbing.ca
+service@sterlingplumbing.ca
+generalinfo@oipc.ab.ca
+privacy@wolseleyinc.ca
+cai.communications@cai.gouv.qc.ca
+info@oipc.bc.ca
+applications@wolseleyinc.ca
+collections@wolseleyinc.ca
+creditadmin@wolseleyinc.ca
+eastexpress.support@wolseleyinc.ca
