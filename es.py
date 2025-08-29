@@ -1,5 +1,9 @@
-git import requests
-from bs4 import BeautifulSoup
+import requests
+try:
+    from bs4 import BeautifulSoup
+except ImportError:
+    print("Error: beautifulsoup4 is not installed. Please run: pip install beautifulsoup4")
+    exit(1)
 import re
 import urllib.parse
 import time

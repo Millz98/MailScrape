@@ -1,0 +1,22 @@
+{
+    "include": [
+        "."
+    ],
+    "exclude": [
+        "**/node_modules",
+        "**/__pycache__",
+        ".cache"
+    ],
+    "ignore": [
+        "stubs"
+    ],
+    "reportMissingImports": "warning",
+    "reportMissingTypeStubs": "none",
+    "reportMissingModuleSource": "none",
+    "pythonVersion": "3.9",
+    "pythonPlatform": "Darwin",
+    "typeCheckingMode": "basic",
+    "useLibraryCodeForTypes": true,
+    "autoImportCompletions": true,
+    "stubPath": "./stubs"
+}
