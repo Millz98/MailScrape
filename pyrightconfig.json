@@ -13,6 +13,7 @@
     "reportMissingImports": "warning",
     "reportMissingTypeStubs": "none",
     "reportMissingModuleSource": "none",
+    "reportGeneralTypeIssues": "none",
     "pythonVersion": "3.9",
     "pythonPlatform": "Darwin",
     "typeCheckingMode": "basic",
